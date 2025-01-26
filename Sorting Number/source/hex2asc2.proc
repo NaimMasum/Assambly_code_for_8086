@@ -1,0 +1,40 @@
+
+hex2asc proc near
+    ; Convert a single byte in AL to an ASCII string
+        push ax
+        push bx
+        push cx
+        push dx
+        push si
+        mov [si], cr        ; Add carriage return
+        inc si
+        mov [si], lf        ; Add line feed
+        inc si
+        mov cx, 00h
+        mov bx, 0ah         ; Base 10 for decimal conversion
+rpt1:
+        mov dx, 00
+        div bx              ; Divide by 10
+        add dx, '0'         ; Convert remainder to ASCII
+        push dx             ; Store digit on stack
+        inc cx
+        cmp ax, 0ah         ; Check if more digits remain
+        jge rpt1
+        add al, '0'
+        mov [si], al        ; Store the first digit
+rpt2:
+        pop ax
+        inc si
+        mov [si], al        ; Store remaining digits
+        loop rpt2
+        inc si                                               
+        mov al, '$'         ; Terminate the string
+        mov [si], al
+        pop si
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+        ret
+hex2asc endp       
+ 

@@ -1,0 +1,13 @@
+printstring macro msg
+	push ax
+	
+	mov ah,09h
+	lea dx,msg
+	int 21h
+	
+	pop ax;
+endm
+
+
+
+	

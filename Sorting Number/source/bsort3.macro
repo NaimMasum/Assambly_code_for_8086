@@ -1,0 +1,54 @@
+bsort macro array, size, order ; array is 16-bit, size is 16-bit
+    push ax  ; Save registers onto the stack
+    push bx
+    push cx
+    push dx
+    push si
+    mov dl, order   ; Load the sorting order into DL
+
+    mov cl, size    ; Outer loop counter, copy of size
+    dec cx          ; Outer loop runs (size - 1) times
+    
+outer_loop:
+    mov ch, cl      ; Inner loop counter (size - outer iteration)
+    lea si, array   ; Load the address of the array into SI
+
+inner_loop:
+    mov ax, [si]      ; Load the current element
+    mov bx, [si + 2]  ; Load the next element
+
+    cmp dl, 31h         ; Check if sorting order is ascending
+    je ascending
+    cmp dl, 32h         ; Check if sorting order is descending
+    je descending
+    jmp sesh          ; Exit if invalid order
+
+ascending:
+    cmp ax, bx        ; Compare the two elements
+    jl no_swap        ; Skip swapping if in correct ascending order
+    jmp swap_elements ; Perform swapping
+
+descending:
+    cmp ax, bx        ; Compare the two elements
+    jg no_swap        ; Skip swapping if in correct descending order
+
+swap_elements:
+    ; Swap the elements
+    mov [si], bx      ; Store the larger/smaller element in the current position
+    mov [si + 2], ax  ; Store the smaller/larger element in the next position
+
+no_swap:
+    add si, 2         ; Move to the next pair of elements
+    dec ch            ; Decrement inner loop counter
+    jnz inner_loop    ; Repeat inner loop until CH == 0
+
+    dec cx            ; Decrement outer loop counter
+    jnz outer_loop    ; Repeat outer loop until CX == 0
+
+sesh:
+    pop si            ; Restore registers
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+endm
